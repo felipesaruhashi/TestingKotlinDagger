@@ -1,0 +1,84 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.test.feliperibeirosaruhashi.testingkotlindagger"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "com.test.feliperibeirosaruhashi.testingkotlindagger.MockTestRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
+        main.java.srcDirs += [file("$buildDir/generated/source/kapt/androidTest")]
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.support:support-annotations:25.0.0'
+    }
+}
+
+kapt {
+    generateStubs = true
+}
+
+final SUPPORT_LIBRARY_VERSION = '25.1.0'
+final DAGGER_VERSION = '2.8'
+final DEXMAKER_VERSION = '1.4'
+final MOCKITO_VERSION = '2.6.2'
+final ESPRESSO_VERSION = '2.2.2'
+final RUNNER_VERSION = '0.5'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    testCompile 'junit:junit:4.12'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
+
+    compile "com.google.dagger:dagger:$DAGGER_VERSION"
+    kapt "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+
+    kaptTest "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
+
+    kaptAndroidTest "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
+
+
+    androidTestCompile "com.google.dagger:dagger:$DAGGER_VERSION"
+
+    androidTestCompile "com.android.support.test:runner:$RUNNER_VERSION"
+    androidTestCompile "com.android.support.test:rules:$RUNNER_VERSION"
+    androidTestCompile "org.mockito:mockito-core:$MOCKITO_VERSION"
+
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:$ESPRESSO_VERSION"
+
+
+    androidTestCompile "com.crittercism.dexmaker:dexmaker:$DEXMAKER_VERSION"
+    androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:$DEXMAKER_VERSION"
+    androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:$DEXMAKER_VERSION"
+}
